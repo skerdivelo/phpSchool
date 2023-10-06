@@ -44,28 +44,60 @@ if (isset($_POST['nuova_carta'])) {
     $_SESSION['mano'][] = $cartaPescata;
     $_SESSION['punteggio'] = calcolaValoreMano($_SESSION['mano']);
     $points = $_SESSION['punteggio'];
-    if($_SESSION['punteggio'] == 7.5){
-        echo "Hai vinto! Il tuo punteggio è " . $_SESSION['punteggio'];
+    if ($_SESSION['punteggio'] == 7.5) {
+        echo "<div style='color:green;'>Hai vinto! Il tuo punteggio è " . $_SESSION['punteggio'] . "</div>";
         session_unset();
         session_destroy();
-    }else if ($_SESSION['punteggio'] > 7.5) {
-        echo "Hai perso! Il tuo punteggio è " . $_SESSION['punteggio'];
+    } else if ($_SESSION['punteggio'] > 7.5) {
+        echo "<div style='color:red;'>Hai perso! Il tuo punteggio è " . $_SESSION['punteggio'] . "</div>";
         session_unset();
         session_destroy();
     }
 }
-
 ?>
 
 <!DOCTYPE html>
 <html>
 <head>
     <title>Sette e Mezzo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            text-align: center;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        p {
+            font-size: 24px;
+            margin-top: 20px;
+        }
+
+        form {
+            margin-top: 20px;
+        }
+
+        input[type="submit"] {
+            padding: 10px 20px;
+            font-size: 18px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+    </style>
 </head>
 <body>
     <h1>Sette e Mezzo</h1>
     <p>Il tuo punteggio: <?php echo $points; ?></p>
-    
+
     <form method="post">
         <input type="submit" name="nuova_carta" value="Pesca una nuova carta">
     </form>
