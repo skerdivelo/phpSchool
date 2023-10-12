@@ -1,6 +1,9 @@
 <?php
 session_start();
 
+// Inizializza la variabile $points
+$points = 0;
+
 // Funzione per calcolare il valore di una mano di carte
 function calcolaValoreMano($mano) {
     $valore = 0;
@@ -28,6 +31,10 @@ if (!isset($_SESSION['punteggio'])) {
     $_SESSION['punteggio'] = 0;
 }
 
+if (!isset($_SESSION['vittorie'])) {
+    $_SESSION['vittorie'] = 0;
+}
+
 if (isset($_POST['nuova_carta'])) {
     $carteSetteMezzo = ['1', '2', '3', '4', '5', '6', '7', 'fante', 'cavallo', 're'];
     $mazzo = [];
@@ -44,12 +51,38 @@ if (isset($_POST['nuova_carta'])) {
     $_SESSION['mano'][] = $cartaPescata;
     $_SESSION['punteggio'] = calcolaValoreMano($_SESSION['mano']);
     $points = $_SESSION['punteggio'];
+
     if ($_SESSION['punteggio'] == 7.5) {
-        echo "<div style='color:green;'>Hai vinto! Il tuo punteggio è " . $_SESSION['punteggio'] . "</div>";
+        $_SESSION['vittorie']++;
+        echo "<div style='color:green;'>Hai vinto! Il tuo punteggio è " . $_SESSION['punteggio'] . " Vittorie: " . $_SESSION['vittorie'] . "</div>";
         session_unset();
         session_destroy();
     } else if ($_SESSION['punteggio'] > 7.5) {
         echo "<div style='color:red;'>Hai perso! Il tuo punteggio è " . $_SESSION['punteggio'] . "</div>";
+        session_unset();
+        session_destroy();
+    }
+}
+
+if (isset($_POST['nuova_carta_banco'])) {
+    $carteSetteMezzo = ['1', '2', '3', '4', '5', '6', '7', 'fante', 'cavallo', 're'];
+    $mazzo = [];
+    foreach ($carteSetteMezzo as $carta) {
+        $mazzo[] = $carta . '_di_denari';
+        $mazzo[] = $carta . '_di_spade';
+        $mazzo[] = $carta . '_di_coppe';
+        $mazzo[] = $carta . '_di_bastoni';
+    }
+
+    shuffle($mazzo);
+
+    $cartaPescata = array_shift($mazzo);
+    $_SESSION['mano'][] = $cartaPescata;
+    $_SESSION['punteggio'] = calcolaValoreMano($_SESSION['mano']);
+    $points = $_SESSION['punteggio'];
+
+    if ($_SESSION['punteggio'] >= 7.5) {
+        echo "<div style='color:red;'>Il banco ha perso! Il suo punteggio è " . $_SESSION['punteggio'] . "</div>";
         session_unset();
         session_destroy();
     }
@@ -96,10 +129,13 @@ if (isset($_POST['nuova_carta'])) {
 </head>
 <body>
     <h1>Sette e Mezzo</h1>
-    <p>Il tuo punteggio: <?php echo $points; ?></p>
+    <p>Il tuo punteggio: <?php
+        echo $points; 
+    ?></p>
 
     <form method="post">
         <input type="submit" name="nuova_carta" value="Pesca una nuova carta">
+        <input type="submit" name="nuova_carta_banco" value="Pesca per il banco">
     </form>
 </body>
 </html>
