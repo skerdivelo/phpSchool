@@ -1,4 +1,5 @@
 <link rel="stylesheet" href="ricerca.css">
+
 <?php
 require("config.php");  //file di config con i parametri di connessione
 $mydb = new mysqli(SERVER, UTENTE, PASSWORD, DATABASE);
@@ -15,7 +16,7 @@ echo "</form>";
 
 //search
 if (isset($_GET["search"])) {
-    $search = $_GET["search"];
+    $search = htmlspecialchars($_GET["search"]);
     $sql = "SELECT * FROM auto WHERE marca LIKE '%$search%' OR modello LIKE '%$search%' OR anno LIKE '%$search%' OR alimentazione LIKE '%$search%' OR cambio LIKE '%$search%' OR kw LIKE '%$search%' OR prezzo LIKE '%$search%'";
     $result = $mydb->query($sql);
     if ($result->num_rows > 0) {
@@ -46,6 +47,6 @@ if (isset($_GET["search"])) {
         }
         echo "</table>";
     } else {
-        echo "0 results";
+        echo "0 results for " .$search;
     }
 }
