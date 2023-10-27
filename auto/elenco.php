@@ -1,4 +1,4 @@
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="elenco.css">
 
 <?php
 require("config.php");  //file di config con i parametri di connessione
