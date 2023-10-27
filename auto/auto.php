@@ -1,3 +1,5 @@
+<link rel="stylesheet" href="style.css">
+
 <?php
 require("config.php");  //file di config con i parametri di connessione
 $mydb = new mysqli(SERVER, UTENTE, PASSWORD, DATABASE);
