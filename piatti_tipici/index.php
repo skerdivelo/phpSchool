@@ -1,12 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            padding: 20px;
+        }
+        .piatto {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
 <?php
-require("config.php");  //file di config con i parametri di connessione
+require("config.php");
 $mydb = new mysqli(SERVER, UTENTE, PASSWORD, DATABASE);
 if ($mydb->connect_errno) {
     echo "Errore nella connessione a MySQL: (" . $mydb->connect_errno . ") " . $mydb->connect_error;
-    exit();  //termina la pagina
+    exit();
 }
 
-// Preparazione della query SQL
 $sql = "SELECT * FROM pietanza";
 
 if (isset($_GET['regione'])) {
@@ -19,7 +37,6 @@ if (isset($_GET['regione'])) {
 
 $stmt = $mydb->prepare($sql);
 
-// Esecuzione della query SQL
 if (isset($regione)) {
     $stmt->bind_param("s", $regione);
     $stmt->execute();
@@ -32,9 +49,10 @@ if (isset($regione)) {
 
 $result = $stmt->get_result();
 
-// Stampa dei risultati
 while ($row = $result->fetch_assoc())
 {
-    echo $row['nome'] . "<br>";
+    echo "<div class='piatto'>" . $row['nome'] . "</div>";
 }
 ?>
+</body>
+</html>

@@ -64,7 +64,7 @@ INSERT INTO `pietanza` (`id`, `nome`, `descrizione`, `fkRegione`) VALUES
 (2, 'Parmigiana', 'Piatto tipico siciliano', 2),
 (3, 'Orecchiette', 'Piatto tipico pugliese', 3),
 (4, 'Risotto', 'Piatto tipico lombardo', 1),
-(5, 'Polenta', 'Piatto tipico veneto', 2),
+(5, 'Polenta', 'Piatto tipico veneto', 2);
 -- --------------------------------------------------------
 
 --
