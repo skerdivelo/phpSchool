@@ -1,0 +1,56 @@
+body {
+    font-family: "Arial", sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+}
+
+h1 {
+    text-align: center;
+    color: #333;
+}
+
+#winPilots {
+    animation: colorChange 5s infinite alternate;
+}
+
+@keyframes colorChange {
+    from {
+        color: rgb(255, 0, 0);
+    }
+    to {
+        color: rgb(0, 255, 0);
+    }
+}
+
+.vincitori {
+    width: 70%;
+    margin: 20px auto;
+    border-collapse: separate;
+    border-spacing: 0;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.vincitori th,
+.vincitori td {
+    border: 1px solid #ddd;
+    padding: 15px;
+    text-align: left;
+}
+
+.vincitori th {
+    background-color: #3498db;
+    color: white;
+}
+
+.vincitori tr:nth-child(even) {
+    background-color: #ecf0f1;
+}
+
+.vincitori tr:hover {
+    background-color: #d4e6f1;
+    transform: scale(1.01);
+    transition: transform 0.3s ease-in-out;
+}

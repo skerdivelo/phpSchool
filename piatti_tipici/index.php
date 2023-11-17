@@ -4,15 +4,64 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
+            margin: 0;
             padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: url('pic.jpg') center/cover no-repeat; /* Replace 'your-background-image.jpg' with your image file */
         }
+
+        form {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        select {
+            margin-top: 23px;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #6c757d;
+            background-color: #e9ecef;
+            font-size: 16px;
+            font-weight: bold;
+            color: #495057;
+            transition: box-shadow 0.3s ease, transform 0.3s ease;
+        }
+
+        select:hover {
+            box-shadow: 0 5px 15px rgba(108, 117, 125, 0.2);
+            transform: translateY(-2px);
+        }
+
         .piatto {
-            background-color: #fff;
-            border: 1px solid #ddd;
-            padding: 10px;
-            margin-bottom: 10px;
-            border-radius: 5px;
+            background-color: #ffffff;
+            border: 1px solid #ced4da;
+            padding: 15px;
+            margin: 10px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            opacity: 0.9;
+        }
+
+        .piatto:hover {
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transform: translateY(-3px);
+        }
+
+        .piatto a {
+            text-decoration: none;
+            color: #007bff;
+            font-weight: bold;
+        }
+
+        #pText {
+            font-weight: bold;
+            margin-left: 20px;
+            text-align: center;
+            color: white;
         }
     </style>
 </head>
@@ -25,33 +74,42 @@ if ($mydb->connect_errno) {
     exit();
 }
 
-$sql = "SELECT * FROM pietanza";
+$regioni = array(
+    1 => 'Lombardia',
+    2 => 'Veneto',
+    3 => 'Puglia'
+);
 
-if (isset($_GET['regione'])) {
-    $regione = $_GET['regione'];
-    $sql .= " WHERE fkRegione = (SELECT id FROM regione WHERE nome = ?)";
-} elseif (isset($_GET['ingrediente'])) {
-    $ingrediente = $_GET['ingrediente'];
-    $sql .= " WHERE id IN (SELECT fkPietanza FROM utilizza WHERE fkIngrediente = (SELECT id FROM ingrediente WHERE nome = ?))";
-}
+$ingredienti = array(
+    1 => 'Pomodoro',
+    2 => 'Melanzana',
+    3 => 'Peperone',
+    4 => 'Cipolla',
+    5 => 'Olio'
+);
 
-$stmt = $mydb->prepare($sql);
+echo "<form action='index.php' method='get'>";
+echo "<select name='tipo' onchange='this.form.submit()'>";
+echo "<option value=''>Seleziona...</option>";
+echo "<option value='regione'>Regioni</option>";
+echo "<option value='ingrediente'>Ingredienti</option>";
+echo "</select>";
+echo "</form>";
 
-if (isset($regione)) {
-    $stmt->bind_param("s", $regione);
-    $stmt->execute();
-} elseif (isset($ingrediente)) {
-    $stmt->bind_param("s", $ingrediente);
-    $stmt->execute();
+if (isset($_GET['tipo'])) {
+    $tipo = $_GET['tipo'];
+
+    if ($tipo == 'regione') {
+        foreach ($regioni as $id => $regione) {
+            echo "<div class='piatto'><a href='piatti.php?regione=$regione'>$regione</a></div>";
+        }
+    } elseif ($tipo == 'ingrediente') {
+        foreach ($ingredienti as $id => $ingrediente) {
+            echo "<div class='piatto'><a href='piatti.php?ingrediente=$ingrediente'>$ingrediente</a></div>";
+        }
+    }
 } else {
-    $stmt->execute();
-}
-
-$result = $stmt->get_result();
-
-while ($row = $result->fetch_assoc())
-{
-    echo "<div class='piatto'>" . $row['nome'] . "</div>";
+    echo "<p id='pText'>Nessuna selezione effettuata.</p>";
 }
 ?>
 </body>
