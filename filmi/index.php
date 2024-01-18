@@ -1,67 +1,66 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Film and Actors</title>
-</head>
-<body>
-
-<form method="post" action="">
-    <label for="film">Seleziona un film:</label>
-    <select name="film" id="film">
-        <?php
-        require("config.php");
-        $db = new mysqli(SERVER, UTENTE, PASSWORD, DATABASE);
-        if ($db->connect_errno) {
-            echo "Errore nella connessione a MySQL: (" . $mysqli->connect_errno . ") " . $mysqli->connect_error;
-            exit();
-        }
-
-        // Fetch the list of films
-        $film_query = "SELECT id, titolo FROM film";
-        $film_result = $db->query($film_query);
-
-        if ($film_result->num_rows > 0) {
-            while ($row = $film_result->fetch_assoc()) {
-                echo "<option value='" . $row['id'] . "'>" . $row['titolo'] . "</option>";
-            }
-        }
-
-        $db->close();
-        ?>
-    </select>
-    <input type="submit" value="Mostra Attori">
-</form>
-
 <?php
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $selectedFilmId = $_POST["film"];
-
-    $db = new mysqli(SERVER, UTENTE, PASSWORD, DATABASE);
-    if ($db->connect_errno) {
+    require("config.php");
+    $mydb = new mysqli(SERVER, UTENTE, PASSWORD, DATABASE);
+    if ($mydb->connect_errno) {
         echo "Errore nella connessione a MySQL: (" . $mysqli->connect_errno . ") " . $mysqli->connect_error;
         exit();
     }
 
-    $actors_query = "SELECT a.nome, a.cognome FROM attore a
-                    INNER JOIN recita r ON a.id = r.fk_attore
-                    WHERE r.fk_film = $selectedFilmId";
+    $titolo = '';
+    $attori = [];
 
-    $actors_result = $db->query($actors_query);
-
-    if ($actors_result->num_rows > 0) {
-        echo "<h2>Attori che recitano in questo film:</h2>";
-        echo "<ul>";
-        while ($row = $actors_result->fetch_assoc()) {
-            echo "<li>" . $row['nome'] . " " . $row['cognome'] . "</li>";
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        $titolo = $_POST['film'];
+        $stmt = $mydb->prepare("
+            SELECT attore.nome, attore.cognome 
+            FROM attore 
+            INNER JOIN recita ON attore.id = recita.fkAttore 
+            INNER JOIN film ON recita.fkFilm = film.id 
+            WHERE film.titolo = ?
+        ");
+        $stmt->bind_param("s", $titolo);
+        $stmt->execute();
+        $results = $stmt->get_result();
+        while($row = $results->fetch_assoc()){
+            $attori[] = $row["nome"] . ' ' . $row["cognome"];
         }
-        echo "</ul>";
-    } else {
-        echo "<p>Nessun attore trovato per questo film.</p>";
     }
 
-    $db->close();
-}
+    $stmt = $mydb->prepare("SELECT titolo FROM film");
+    $stmt->execute();
+    $results = $stmt->get_result();
 ?>
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Film</title>
+</head>
+<body>
+    <form method="post">
+        <select name="film">
+            <?php
+                if($results->num_rows>0){
+                    while($row = $results->fetch_assoc()){
+                        echo "<option ".($titolo == $row["titolo"] ? 'selected' : '').">".$row["titolo"]."</option>";
+                    }
+                }else{
+                    echo "No results";
+                }
+            ?>
+        </select>
+        <input type="submit" value="Mostra Attori">
+    </form>
+    <?php
+        if (!empty($attori)) {
+            echo '<ul>';
+            foreach ($attori as $attore) {
+                echo '<li>' . $attore . '</li>';
+            }
+            echo '</ul>';
+        }
+    ?>
 </body>
 </html>
